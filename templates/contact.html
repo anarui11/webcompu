@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Numeros aleatorios</title>
+  <meta name="description" content="website description" />
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+ 
+</head>
+
+<body>
+  <div id="main">
+    <div id="header">
+      <div id="logo">
+        <div id="logo_text">
+          <h1><a href="index.html">NUMEROS<span class="logo_colour">ALEATORIOS</span></a></h1>
+        </div>
+      </div>
+      <div id="menubar">
+        <ul id="menu">       
+          <li class="selected"><a href="contact.html">Home</a></li>
+          <li><a href="result.html">Resultados Gráficos</a></li>
+        </ul>
+      </div>
+    </div>
+	
+    <div id="content_header"></div>
+  
+    <div id="site_content">
+
+
+<script type="text/javascript">
+		var sse = new EventSource("/update_media");
+    	sse.onmessage = function(event) {
+    		var valor = event.data;
+    		obj = JSON.parse(valor)
+    	  	if (obj.tipo == 'media') {
+           		document.getElementById('md').innerHTML = "Media: "+obj.valor;
+        	 	document.getElementById('media').setAttribute('value', obj.valor);
+        	};
+        	if (obj.tipo =='alerta'){
+		    alert("ALERTA! El número:"+ obj.valor+"superó el umbral runtime");
+		};
+		if (obj.tipo =='umbralrun'){
+		    document.getElementById('umbrun').innerHTML = "Umbralrun: "+obj.valor;
+		};
+		
+    	};
+    
+	</script>
+   
+    <div id="valor_media">
+    <h2>Media números</h2>
+     <div  id="md"></div> <meter id="media" value="0" background="blue" min="0" max="100" low="20" high="80"></meter> 
+  </div>
+
+
+
+  
+<h2>NUMEROS OBTENIDOS DE LA BASE DE DATOS</h2> 
+<div id="table-scroll">     
+      <table border = 1>
+  <tr>
+         {% for val in lista %}
+	    
+	       <th> Numero:{{ val }} </th>
+		     
+        {% endfor %}
+
+</tr> 
+<tr>
+	{% for fec in fecha %}
+        
+		<th> Fecha:{{ fec }} </th>
+	
+      
+	{% endfor %}
+</tr>
+<tr>
+	{% for hor in hora %}
+        
+		<th> Hora:{{ hor }} </th>
+	
+      
+	{% endfor %}
+</tr>
+      </table>
+
+      
+</div>
+	<h2>UMBRALES</h2> 
+	<div class="form_settings">
+	<p id="umbrun" >Umbral runtime fijado: {{ umbralrun }}</p>
+	<form action="." method="POST">Umbral runtime
+        <input class="contact" type="text" name="umbralrun" >
+        <input  class="submit" type="submit" name="my-form" value="Enviar Umbral Runtime">
+	
+  	
+    </form>
+	</div>
+
+ 
+  
+    <div class="form_settings">
+    <p>Umbral inferior fijado: {{ umbralinf }}</p>
+    <form action="." method="POST">Umbral Inferior
+        <input type="text" name="umbral-i" >
+        
+ 	<input class="submit" type="submit" name="my-form" value="Enviar Umbral Inf"></p>
+	
+    </form>
+</div>
+<div class="form_settings">
+ <form action="." method="POST">Umbral Superior
+        <p>Umbral superior fijado: {{ umbralsup }}</p>
+	<input type="text" name="umbral-s" >
+	<input class="submit" type="submit" name="my-form" value="Enviar Umbral Sup">
+	
+	 </form>
+</div>
+ 
+<h2>NUMEROS FILTRADOS POR UMBRAL</h2>
+<div id="table-scroll">     
+ 
+      <table border = 1>
+  <tr>
+         {% for val in listaum %}
+	    
+	       <th> Numero:{{ val }} </th>
+		     
+        {% endfor %}
+
+</tr> 
+<tr>
+	{% for fec in fechaum %}
+        
+		<th> Fecha:{{ fec }} </th>
+	
+      
+	{% endfor %}
+</tr>
+<tr>
+	{% for hor in horaum %}
+        
+		<th> Hora:{{ hor }} </th>
+	
+      
+	{% endfor %}
+</tr>
+      </table>
+
+      
+</div>
+
+
+ 
+  </div>
+ </div>
+</div>
+    <div id="content_footer"></div>
+    <div id="footer">
+     
+		COMPUTACION EN RED--MUIT--UAH
+    </div>
+  </div>
+</body>
+</html>
