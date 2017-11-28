@@ -95,7 +95,7 @@
 	<div class="form_settings">
 	<p id="umbrun" >Umbral runtime fijado: {{ umbralrun }}</p>
 	<form action="." method="POST">Umbral runtime
-        <input class="contact" type="text" name="umbralrun" >
+        <input class="contact" type="number" name="umbralrun" min="0" max="100">
         <input  class="submit" type="submit" name="my-form" value="Enviar Umbral Runtime">
 	
   	
@@ -107,7 +107,7 @@
     <div class="form_settings">
     <p>Umbral inferior fijado: {{ umbralinf }}</p>
     <form action="." method="POST">Umbral Inferior
-        <input type="text" name="umbral-i" >
+        <input type="number" name="umbral-i"  min="0" max="100" >
         
  	<input class="submit" type="submit" name="my-form" value="Enviar Umbral Inf"></p>
 	
@@ -116,7 +116,7 @@
 <div class="form_settings">
  <form action="." method="POST">Umbral Superior
         <p>Umbral superior fijado: {{ umbralsup }}</p>
-	<input type="text" name="umbral-s" >
+	<input type="number" name="umbral-s" min="0" max="100" >
 	<input class="submit" type="submit" name="my-form" value="Enviar Umbral Sup">
 	
 	 </form>
