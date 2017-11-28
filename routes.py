@@ -16,6 +16,7 @@ _token      = '1510354696907_Eyiro6Dnp75b5381'
 url='http://www.numeroalazar.com.ar/'
 bbt = BBT(token = _token, hostname = _hostname)
 
+
 def gethtml(url):
     try:
         req = urllib2.Request(url)
