@@ -36,12 +36,28 @@ def getnum(web):
     #print num
     return num[0]
 
-
+def mediabeebotte():
+    numBBT=bbt.read('datosweb','numaleatorio', limit=100)
+    total=0
+    valor=0
+    listanum = []
+    listafecha= []
+    listahora= []
+    for dat in numBBT:    
+	total=total+1 
+        #print total
+	num= dat['data']
+        #print num
+	valor=float(valor) + float(num)
+    media=valor/total
+    mediaBBT=1
+    print 'media bt',media
+    return media
+  
 
 
 
 def insertBBT(fecha,hora,numero):
- 
     bbt.write("datosweb", "fecha", fecha)
     bbt.write("datosweb", "hora", hora)
     bbt.write("datosweb", "numaleatorio", float(numero))
@@ -96,6 +112,12 @@ def update_media():
 	alerta = {"tipo":"alerta", "valor":numero}
 	data_al_json = json.dumps(alerta)
   	yield 'data: %s\n\n' % str(data_al_json)
+   
+    print 'mediabbt', numeroBBT
+    mBBT = {"tipo":"mediaBBT", "valor":numeroBBT}
+    data_bbt_json = json.dumps(mBBT)
+    yield 'data: %s\n\n' % str(data_bbt_json)
+        
     
 	
 	
@@ -228,9 +250,12 @@ def saveMongo():
     global umbralrun
     global media_value
     global alert
+    global mediaBBT
+    global numeroBBT
     global umbrun
     alert =0;
-    
+    mediaBBT=0;
+    numeroBBT=0
     web=gethtml(url)
     fecha = time.strftime("%d/%m/%y")
     hora =  time.strftime("%X")
@@ -241,8 +266,9 @@ def saveMongo():
     cursor = datos.find()
     #print 'umbral puesto', umbralrun
     media_value=comp_media(cursor)
-    print media_value
-
+    #print media_value
+    numeroBBT=mediabeebotte()
+    
     if umbralrun > 0:
         if numero > umbralrun:
             print 'Umbral superado!'
@@ -269,7 +295,7 @@ if __name__ == "__main__":
     umbralrun=0
     umbralsup=100
     umbralinf=0
-    
+    numeroBBT=mediabeebotte()
     umbrun=0;
     datos,numero=saveMongo()  
     #datosmongo = datos.find()
