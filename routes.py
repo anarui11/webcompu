@@ -1,4 +1,3 @@
-# -*-coding:utf-8-*-
 
 from flask import Flask,url_for,render_template, request,Response
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -17,6 +16,7 @@ url='http://www.numeroalazar.com.ar/'
 bbt = BBT(token = _token, hostname = _hostname)
 
 
+#Obtiene un html de una URL
 def gethtml(url):
     try:
         req = urllib2.Request(url)
@@ -26,37 +26,16 @@ def gethtml(url):
         return ''
 
 
-
+#Obtiene un dato de la web
 def getnum(web):
     soup = BeautifulSoup(web, 'html.parser')
-    #print soup
     busca =soup.find(id="numeros_generados").text
     num= re.findall(r"[0-9]+.[0-9]{2}",busca)
-    
-    #print num
     return num[0]
 
-def mediabeebotte():
-    numBBT=bbt.read('datosweb','numaleatorio', limit=100)
-    total=0
-    valor=0
-    listanum = []
-    listafecha= []
-    listahora= []
-    for dat in numBBT:    
-	total=total+1 
-        #print total
-	num= dat['data']
-        #print num
-	valor=float(valor) + float(num)
-    media=valor/total
-    mediaBBT=1
-    print 'media bt',media
-    return media
-  
 
 
-
+#Inserta fecha,hora y numero en la base de datos Beebotte
 def insertBBT(fecha,hora,numero):
     bbt.write("datosweb", "fecha", fecha)
     bbt.write("datosweb", "hora", hora)
@@ -64,18 +43,18 @@ def insertBBT(fecha,hora,numero):
 
     
 
-
-def insertMongo(num_1,fecha,hora):
+#Inserta fecha,hora y numero en la base de datos Beebotte
+def insertMongo(num,fecha,hora):
     #conexion
     con = MongoClient('localhost',27017)
     db = con.datosweb
     datos = db.datos
 
     #insertar datos
-    datonum1 ={"numero":num_1 , "fecha":fecha, "hora":hora}
+    datonum ={"numero":num , "fecha":fecha, "hora":hora}
     
     try:
-        datos.insert(datonum1)
+        datos.insert(datonum)
        
     except Exception as e:
         print "Unexpected error:", type(e), e
@@ -84,26 +63,21 @@ def insertMongo(num_1,fecha,hora):
 
 
 
-def getMongo():
-    #obtener un dato
-    datosmongo = datos.find_one()
-    return datosmongo
   
 
-
+#Actualiza datos en mongo
 def updateMongo(datosmongo):
-    #actualizar dato en una colección
-    datos.update(datosmongo, {"$set":{"numero":num_1,"fecha":fecha}})
+    #actualizar dato en una coleccion
+    datos.update(datosmongo, {"$set":{"numero":num,"fecha":fecha}})
 
 
 
 
 app = Flask(__name__)
 
-
-def update_media():	
-    	   
-    media = media_value
+#Actualiza media y otras variables 
+def update_media():		   
+    media = media_mongo
     vmedio = {"tipo":"media", "valor":media}
     data_json = json.dumps(vmedio)
     yield 'data: %s\n\n' % str(data_json)
@@ -121,13 +95,13 @@ def update_media():
     
 	
 	
-			 
+#Ruta inicial			 
 @app.route('/')
 def routindex():
     return render_template('contact.html',lista = listanum, fecha=listafecha, hora=listahora)
 	
 
-
+#Ruta a la pestana resultados graficos del html
 @app.route('/result.html')
 def index():
     return render_template('result.html')
@@ -141,21 +115,20 @@ def sse_request():
 
 	  
 
-
+#Ruta de actualizacion de datos aleatoria
 @app.route('/contact.html')
 def resultcontact():
     return render_template('contact.html', lista= listanum, fecha=listafecha, hora=listahora, listaum= listaumnum, fechaum=listaumfecha, horaum=listaumhora)
 
 
 
-
+#Ruta inicial, implementacion de metodo POST
 @app.route('/', methods=['POST'])
 def my_template():
     global umbralinf
     global umbralsup
     global media
     global umbralrun
-    umbrun=0
     cursor = datos.find()
     listaumnum = []
     listaumfecha= []
@@ -218,14 +191,29 @@ def my_template():
    
 
 
-				  
-	
+#Funcion que calcula la media de la base de datos de beebotte				  
+def mediaBeebotte():
+    numBBT=bbt.read('datosweb','numaleatorio', limit=100)
+    total=0
+    valor=0
+    listanum = []
+    listafecha= []
+    listahora= []
+    for dat in numBBT:    
+	total=total+1 
+        #print total
+	num= dat['data']
+        #print num
+	valor=float(valor) + float(num)
+    media=valor/total
+    mediaBBT=1
+    print 'media bt',media
+    return media
+  
 
-      
 
-
-#funcion que comprueba la media
-def comp_media(cursor):
+#Funcion que calcula la media de la base de datos de mongo
+def mediaMongo(cursor):
     total=0
     valor=0
     listanum = []
@@ -242,39 +230,32 @@ def comp_media(cursor):
 	listahora.append(hor)
     media=valor/total
     return media
-    
-def saveMongo():
+
+#Funcion que guarda datos en las bases de datos externa e interna.
+def guardarDatos():
     global numero
-    global datos
-    global cursor
     global umbralrun
-    global media_value
+    global media_mongo
     global alert
     global mediaBBT
     global numeroBBT
-    global umbrun
     alert =0;
     mediaBBT=0;
     numeroBBT=0
-    web=gethtml(url)
     fecha = time.strftime("%d/%m/%y")
     hora =  time.strftime("%X")
+    web=gethtml(url)
     numero= getnum(web)
-    #print hora
     insertBBT(fecha,hora,numero)
     datos=insertMongo(numero,fecha,hora)
     cursor = datos.find()
-    #print 'umbral puesto', umbralrun
-    media_value=comp_media(cursor)
-    #print media_value
-    numeroBBT=mediabeebotte()
+    media_mongo=mediaMongo(cursor)
+    numeroBBT=mediaBeebotte()
     
     if umbralrun > 0:
         if numero > umbralrun:
             print 'Umbral superado!'
             alert=1
-    #print 'Leo y Guardo en Mongo:'
-    #print numero
     return datos,numero
 
 
@@ -282,37 +263,37 @@ def saveMongo():
 if __name__ == "__main__":
    
     scheduler = BackgroundScheduler()
-    scheduler.add_job(saveMongo,'interval',seconds=10)
+    scheduler.add_job(guardarDatos,'interval',seconds=10)
     scheduler.start()
- 
 
     global fecha
     global web
     global dat
     global media
     global umbralrun
+    global datos
+    global cursor
    
     umbralrun=0
     umbralsup=100
     umbralinf=0
-    numeroBBT=mediabeebotte()
-    umbrun=0;
-    datos,numero=saveMongo()  
-    #datosmongo = datos.find()
-    total=0
-    valor=0
     listanum = []
     listafecha= []
     listahora= []
-    media=comp_media(datos.find())
+    
+    datos,numero=guardarDatos()  
+    numeroBBT=mediaBeebotte()
+    media=mediaMongo(datos.find())
+#Obtiene los datos de mongo y los guarda en listas
     for dat in datos.find():    
 	num= dat['numero']
 	fech= dat['fecha']
 	hor= dat['hora']
-	valor=float(valor) + float(num)
 	listanum.append(num)
 	listafecha.append(fech)
-	listahora.append(hor)
+        listahora.append(hor)
+   
+   
  
    
     app.run(host ='0.0.0.0')
