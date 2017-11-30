@@ -39,7 +39,7 @@
     		obj = JSON.parse(valor)
     	  	if (obj.tipo == 'media') {
            		document.getElementById('md').innerHTML = "Media MongoDB: "+obj.valor;
-        	 	document.getElementById('media').setAttribute('value', obj.valor);
+        	 	//document.getElementById('media').setAttribute('value', obj.valor);
         	};
         	if (obj.tipo =='alerta'){
 		    alert("ALERTA! El número:"+ obj.valor+"superó el umbral runtime");
@@ -49,7 +49,7 @@
 		};
 		if (obj.tipo =='mediaBBT'){
 		    document.getElementById('md_bbt').innerHTML = "Media Beebotte: "+obj.valor;
-		    document.getElementById('media').setAttribute('value', obj.valor);	
+		    //document.getElementById('media').setAttribute('value', obj.valor);	
 		};
 		
     	};
@@ -58,11 +58,11 @@
    
     <div id="valor_media">
     <h2>Media números</h2>
-     <div  id="md"></div> <meter id="media" value="0" background="blue" min="0" max="100" low="20" high="80"></meter> 
+     <div  id="md"></div>
   </div>
    <div id="valor_media_bbt">
     <h2>Media números</h2>
-     <div  id="md_bbt"></div> <meter id="media_bbt" value="0" background="blue" min="0" max="100" low="20" high="80"></meter> 
+    <div  id="md_bbt"></div>  
   </div>
 
 

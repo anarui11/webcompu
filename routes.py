@@ -87,7 +87,7 @@ def update_media():
 	data_al_json = json.dumps(alerta)
   	yield 'data: %s\n\n' % str(data_al_json)
    
-    print 'mediabbt', numeroBBT
+    #print 'mediabbt', numeroBBT
     mBBT = {"tipo":"mediaBBT", "valor":numeroBBT}
     data_bbt_json = json.dumps(mBBT)
     yield 'data: %s\n\n' % str(data_bbt_json)
@@ -207,7 +207,7 @@ def mediaBeebotte():
 	valor=float(valor) + float(num)
     media=valor/total
     mediaBBT=1
-    print 'media bt',media
+    #print 'media bt',media
     return media
   
 
@@ -241,7 +241,7 @@ def guardarDatos():
     global numeroBBT
     alert =0;
     mediaBBT=0;
-    numeroBBT=0
+    #numeroBBT=0
     fecha = time.strftime("%d/%m/%y")
     hora =  time.strftime("%X")
     web=gethtml(url)
@@ -292,9 +292,6 @@ if __name__ == "__main__":
 	listanum.append(num)
 	listafecha.append(fech)
         listahora.append(hor)
-   
-   
- 
    
     app.run(host ='0.0.0.0')
     
