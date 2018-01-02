@@ -39,7 +39,7 @@
     		obj = JSON.parse(valor)
     	  	if (obj.tipo == 'media') {
            		document.getElementById('md').innerHTML = "Media MongoDB: "+obj.valor;
-        	 	//document.getElementById('media').setAttribute('value', obj.valor);
+        	 	
         	};
         	if (obj.tipo =='alerta'){
 		    alert("ALERTA! El número:"+ obj.valor+"superó el umbral runtime");
@@ -49,7 +49,7 @@
 		};
 		if (obj.tipo =='mediaBBT'){
 		    document.getElementById('md_bbt').innerHTML = "Media Beebotte: "+obj.valor;
-		    //document.getElementById('media').setAttribute('value', obj.valor);	
+		   	
 		};
 		
     	};
@@ -101,7 +101,6 @@
 </div>
 	<h2>UMBRALES</h2> 
 	<div class="form_settings">
-	<p id="umbrun" >Umbral runtime fijado: {{ umbralrun }}</p>
 	<form action="." method="POST">Umbral runtime
         <input class="contact" type="number" name="umbralrun" min="0" max="100">
         <input  class="submit" type="submit" name="my-form" value="Enviar Umbral Runtime">

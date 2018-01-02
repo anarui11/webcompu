@@ -292,8 +292,8 @@ if __name__ == "__main__":
 	listanum.append(num)
 	listafecha.append(fech)
         listahora.append(hor)
-   
-    app.run(host ='0.0.0.0')
+    with app.test_request_context():
+    	app.run(host ='0.0.0.0')
     
 
   
